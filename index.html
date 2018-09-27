@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <script src="js/mui.min.js"></script>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/iconfont.css" />
+    <script type="text/javascript" src="js/html-size-calculation.js" ></script>
+    <script type="text/javascript" charset="utf-8">
+      	mui.init();
+    </script>
+</head>
+<body>
+	<nav class="mui-bar mui-bar-tab">
+	    <a class="mui-tab-item mui-active">
+	        <span class="mui-icon iconfont icon-e-pack-check"></span>
+	        <span class="mui-tab-label">课件包</span>
+	    </a>
+	    <a class="mui-tab-item">
+	        <span class="mui-icon iconfont icon-e-class"></span>
+	        <span class="mui-tab-label">课程表</span>
+	    </a>
+	    <a class="mui-tab-item">
+	        <span class="mui-icon iconfont icon-e-my"></span>
+	        <span class="mui-tab-label">我的</span>
+	    </a>
+	</nav>
+</body>
+<script>
+	var appIsBackground = false;
+	var subpages = ['page/package/index.html','page/class/index.html', 'page/my/index.html'];
+	var subpage_style = {
+		top: '0px',
+		bottom: '51px',
+		color: '#777',
+	};
+	var activeTab = subpages[0];
+	var targetTab;
+	//创建子页面，首个选项卡页面显示，其它均隐藏；
+	mui.plusReady(function() {
+		plus.navigator.setFullscreen(false);
+		var self = plus.webview.currentWebview();
+		for(var i = 0; i < 3; i++) {
+			var temp = {};
+			var sub = plus.webview.create(subpages[i], subpages[i], subpage_style);
+			if(i > 0) {
+				sub.hide();
+			}
+			self.append(sub);
+		}
+		mui('.mui-bar-tab').on('tap', 'a', function(e) {
+//			//更新数据 
+//			App.send('page/project/index.html', 'update');
+//			App.send('page/my/index.html', 'update');
+			
+			targetTab = this.getAttribute('href');
+			if(targetTab == activeTab) { 
+				return;
+			}
+
+			plus.webview.show(targetTab);
+			plus.webview.hide(activeTab);
+			//更改当前活跃的选项卡
+			activeTab = targetTab;
+		}); 
+	});
+	var token = localStorage.getItem("token");;
+//	判断是否登陆 
+	if(token == null) {
+		var page = {
+			"url": "my/login/login",
+			"title": "none",
+			"ani": "none"
+		};
+		mui.plusReady(function() {
+			App.open(page);
+		});
+	}
+	mui.plusReady(function() {
+		upDevice();
+		/**
+		 * 打开应用时 清空角标
+		 */
+		plus.runtime.setBadgeNumber(0);
+		//plus.push.setAutoNotification(false);
+
+		/**
+		 * 消息推送处理
+		 */
+		plus.push.addEventListener("receive", function(msg) {
+			if(typeof msg.payload != 'object') {
+				msg.payload = JSON.parse(msg.payload);
+			}
+			//android 下面收到消息就创建一个本地消息
+			if(plus.os.name != "iOS" && App.getItem('isBackground') == true) {
+				plus.push.createMessage(msg.payload.content, "LocalMSG", {
+					title: msg.payload.title
+				});
+			}
+			if(App.getItem('isBackground') != true) {
+
+				//打开远程地址
+				if(msg.payload.url.indexOf('http') == 0) {
+					/**
+					 * 如果是内部弹窗
+					 */
+					if(msg.payload.type == 'dialog') {
+						App.openRDialogUrl(msg.payload.url);
+						return;
+					}
+					mui.confirm(msg.payload.content, msg.payload.title, ['查看', '关闭'], function(type) {
+
+						if(type.index == 0) {
+							App.openRurl(msg.payload.url);
+						}
+					})
+					return;
+				}
+
+				App.openPushDialog(msg.payload.content);
+
+			}
+
+		}, false);
+		/**
+		 * ios单独处理
+		 */
+		plus.push.addEventListener("click", function(msg) {
+			if(typeof msg.payload != 'object') {
+				msg.payload = JSON.parse(msg.payload);
+			}
+			plus.push.clear();
+			//打开远程地址
+			if(msg.payload.url.indexOf('http') == 0) {
+				/**
+				 * 如果是内部弹窗
+				 */
+				if(msg.payload.type == 'dialog') {
+					App.openRDialogUrl(msg.payload.url);
+					return;
+				}
+				mui.confirm(msg.payload.content, msg.payload.title, ['查看', '关闭'], function(type) {
+					if(type.index == 0) {
+						App.openRurl(msg.payload.url);
+					}
+				})
+				return;
+			}
+			App.openPushDialog(msg.payload.content);
+
+		}, false);
+
+	});
+	//前台进入后台
+	document.addEventListener("pause", function() {
+		App.setItem('isBackground', true);
+		plus.push.setAutoNotification(true);
+	}, false);
+	//后台进入前台
+	document.addEventListener("resume", function() {
+		App.setItem('isBackground', false);
+		plus.push.setAutoNotification(false);
+	}, false);
+	/**
+	 * 网络变化事件
+	 */
+	document.addEventListener("netchange", function() {
+		App.networkStatus();
+	}, false);
+	
+	/**
+	 * 退出登录事件
+	 * */
+	App.request('update',function(){
+		
+		var defaultTab = document.getElementById("defaultTab");
+	    //模拟首页点击
+	    mui.trigger(defaultTab, 'tap');
+	    //切换选项卡高亮
+	    var current = document.querySelector(".mui-bar-tab>.mui-tab-item.mui-active");
+	    if (defaultTab !== current) {
+	        current.classList.remove('mui-active');
+	        defaultTab.classList.add('mui-active');
+	    }
+	})
+	/***
+	 * 禁止返回事件
+	 * */
+	if(mui.os.ios){ //判断是ios还是安卓设备
+        ws=plus.webview.currentWebview();    
+        ws.setStyle({'popGesture':'none'});//ios关闭右划
+        plus.navigator.setStatusBarBackground('#fff');//设置状态栏的颜色
+    }
+</script>
+</html>

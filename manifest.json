@@ -40,6 +40,9 @@
         }
 	},
 	"plus": {
+		"statusbar": {
+	        "immersed": true
+	    },
 		"splashscreen": {
 			"autoclose": true,/*是否自动关闭程序启动界面，true表示应用加载应用入口页面后自动关闭；false则需调plus.navigator.closeSplashscreen()关闭*/
 			"waiting": true
@@ -124,6 +127,102 @@
 					"xxhdpi": ""
 				}
 			}
+		}
+	},
+	"dependencies": {
+		"pages": {
+			"index.html": {
+				"resources": [
+					"page/package/index.html"
+				],
+				"refer": [
+					"page/class/index.html",
+					"page/my/index.html",
+					"page/my/login.html"
+				],
+				"priority": 0
+			},
+			"page/my/index.html": {
+				"resources": [],
+				"refer": [
+					"page/my/modifyPwd.html",
+					"page/my/userInfo.html",
+					"page/my/login.html",
+					"page/my/quest.html",
+					"page/my/aboutUs.html"
+				],
+				"priority": 0
+			},
+			"page/my/userInfo.html": {
+				"resources": [],
+				"refer": [
+					"page/my/login.html"
+				],
+				"priority": 0
+			},
+			"page/my/modifyPwd.html": {
+				"resources": [],
+				"refer": [
+					"page/my/modifyPwdSuccess.html"
+				],
+				"priority": 0
+			}
+		},
+		"idle": {
+			"resources": [
+				"images/e-back.png",
+				"images/e-aboutLogo.png",
+				"images/e-about.png",
+				"images/next-btn-checked.png",
+				"page/my/resetPwd.html",
+				"images/e-html.png",
+				"images/e-txt.png",
+				"images/prev-btn-checked.png",
+				"page/package/courseware.html",
+				"css/iconfont.css",
+				"fonts/iconfont.ttf",
+				"js/mui.js",
+				"images/e-arrow.png",
+				"images/code.png",
+				"images/e-help.png",
+				"css/grid.css.map",
+				"css/main.css",
+				"css/reset.css.map",
+				"sass/reset.scss",
+				"fonts/mui.ttf",
+				"page/my/forget.html",
+				"css/main.css.map",
+				"images/e-head.png",
+				"css/mui.css",
+				"sass/grid.scss",
+				"images/e-pic.png",
+				"images/e-doc.png",
+				"images/e-forget-back.png",
+				"images/prev-btn.png",
+				"images/seach_btn.png",
+				"page/class/addClass.html",
+				"images/e-pwdSuccess.png",
+				"sass/common.scss",
+				"css/grid.css",
+				"images/e-music.png",
+				"images/e-quest.png",
+				"css/common.css",
+				"js/mui.min.js",
+				"images/e-pdf.png",
+				"sass/main.scss",
+				"images/add_class.png",
+				"images/e-video.png",
+				"images/e-pwd.png",
+				"images/e-ppt.png",
+				"css/common.css.map",
+				"js/html-size-calculation.js",
+				"css/mui.min.css",
+				"images/next-btn.png",
+				"images/e-psd.png",
+				"images/e-resetSuccess.png",
+				"css/reset.css",
+				"page/class/editClass.html"
+			]
 		}
 	}
 }

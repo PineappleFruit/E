@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	    <title></title>
+	  	<script type="text/javascript" src="../../js/mui.min.js" ></script>
+	    <link rel="stylesheet" href="../../css/mui.css" />
+	    <link rel="stylesheet" href="../../css/main.css" />
+	    <link rel="stylesheet" href="../../css/iconfont.css" />
+	    <script type="text/javascript" src="../../js/html-size-calculation.js" ></script>	
+	</head>
+	<body class="bg-grey">
+		<div id="app">
+			<header class="header">
+				<div class="e-icon e-back hd-left" @tap="mui.back()"></div>
+				<h2>个人信息</h2>
+			</header>
+			<div class="fix-bd">
+				<ul class="bgff pl30 mt20">
+					<li class="pr30 bb ub ub-ac ptb20">
+						<p class="ub-f1 c32 fz32">头像</p>
+						<div class="e-userInfo">
+							<img :src="avatar ? avatar : '../../images/default-pic-small.png'" alt="" />
+						</div>
+					</li>
+					<li class="pr30 bb ub ub-ac ptb25">
+						<p class="ub-f1 c32 fz32">姓名</p>
+						<span class="fz32 c66">{{data.techer_name}}</span>
+					</li>
+					<li class="pr30 bb ub ub-ac ptb25">
+						<p class="ub-f1 c32 fz32">工号</p>
+						<span class="fz32 c66">{{data.techer_number}}</span>
+					</li>
+					<li class="pr30 bb ub ub-ac ptb25">
+						<p class="ub-f1 c32 fz32">学校</p>
+						<span class="fz32 c66">{{data.college_id}}</span>
+					</li>
+					<li class="pr30 bb ub ub-ac ptb25">
+						<p class="ub-f1 c32 fz32">部门</p>
+						<span class="fz32 c66">{{department}}</span>
+					</li>
+					<li class="pr30 bb ub ub-ac ptb25">
+						<p class="ub-f1 c32 fz32">所属院系</p>
+						<span class="fz32 c66">{{data.college_name}}</span>
+					</li>
+					<li class="pr30 bb ub ub-ac ptb25">
+						<p class="ub-f1 c32 fz32">任教专业</p>
+						<span class="fz32 c66">{{data.specialty_name}}</span>
+					</li>
+					<li class="pr30 bb ub ub-ac ptb25">
+						<p class="ub-f1 c32 fz32">办公室电话</p>
+						<span class="fz32 c66">{{data.telephone}}</span>
+					</li>
+					<li class="pr30 bb ub ub-ac ptb25">
+						<p class="ub-f1 c32 fz32">手机号码</p>
+						<span class="fz32 c66">{{data.phone}}</span>
+					</li>
+					<li class="pr30 ub ub-ac ptb25">
+						<p class="ub-f1 c32 fz32">邮箱地址</p>
+						<span class="fz32 c66">{{data.email}}</span>
+					</li>
+				</ul>
+				<div class="mt30 bgff tx-c c-orange fz32 ptb25" @tap="exit">退出当前账号</div>
+			</div>
+		</div>
+		<script>
+			new Vue({
+				el:'#app',
+				data:function(){
+					return{
+						data : {} ,
+            			avatar : '',
+            			department : ''
+					}
+				},
+				methods:{
+					getuser:function(){
+						App.http('apply/user/info',{
+							"auth-token" : App.getItem("token")
+						},function(data,status){
+							var str = App.config.server+''+data.data.avatar;
+							var strNum = '';
+                        	this.avatar  = str.replace(/\\/g,"/");
+							this.data = data.data;
+							if(data.data.department &&  data.data.department.length > 0){
+								data.data.department.forEach(function(item){
+									strNum = item +"，"+strNum
+								})
+							}
+							this.department = strNum
+						}.bind(this),'get')
+					},
+					exit:function(){
+						App.delItem('token');
+						App.delItem('userid');
+						var page = {
+							"url": "my/login",
+							"title": "none",
+							"ani": "none"
+						};
+						mui.plusReady(function() { 
+							App.open(page); 
+						});
+					}
+				},
+				mounted:function(){
+					this.getuser();
+					//状态更改监听
+					App.request('update', function() {
+						this.getuser();
+						console.log('dhd')
+					}.bind(this));
+				}
+			})
+		</script>
+	</body>
+</html>

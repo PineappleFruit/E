@@ -1,0 +1,32 @@
+{
+	"index.html": {
+		"resources": [
+			"page/package/index.html"
+		],
+		"refer": [
+			"page/class/index.html",
+			"page/package/index.html",
+			"page/my/index.html",
+			"page/my/login.html"
+		]
+	},
+	"page/my/index.html": {
+		"refer": [
+			"page/my/modifyPwd.html",
+			"page/my/userInfo.html",
+			"page/my/login.html",
+			"page/my/quest.html",
+			"page/my/aboutUs.html"
+		]
+	},
+	"page/my/userInfo.html": {
+		"refer": [
+			"page/my/login.html"
+		]
+	},
+	"page/my/modifyPwd.html": {
+		"refer": [
+			"page/my/modifyPwdSuccess.html"
+		]
+	}
+}

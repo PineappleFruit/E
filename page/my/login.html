@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	    <title></title>
+	  	<script type="text/javascript" src="../../js/mui.min.js" ></script>
+	    <link rel="stylesheet" href="../../css/mui.css" />
+	    <link rel="stylesheet" href="../../css/main.css" />
+	    <link rel="stylesheet" href="../../css/iconfont.css" />
+	    <script type="text/javascript" src="../../js/html-size-calculation.js" ></script>
+	</head>
+	<body>
+		<div class="e-login-box" id="app">
+			<h2 class="title fz44 c32 fw-b">欢迎登陆E.WORK</h2>
+	        <div class="e_login">
+	            <div class="e-pwdBox">
+					<div class="mui-input-row e_input">
+				    	<input type="text" class="mui-input-clear" placeholder="请输入IP" v-model="userip">
+				    </div>
+				</div>
+                <div class="e-pwdBox">
+					<div class="mui-input-row e_input">
+				    	<input type="text" class="mui-input-clear" placeholder="请输入手机号或工号" v-model="username">
+				    </div>
+				</div>
+	            <div class="e-pwdBox">
+					<div class="mui-input-row e_input">
+				    	<input type="password" class="mui-input-clear" placeholder="请输入密码" v-model="userpwd">
+				    </div>
+				</div>
+		    </div>
+          	<div class="btn_box mb30">
+              	<button class="btn btn-green" type="button" :disabled="isEidt" @tap="login">登录</button>
+          	</div>
+          	<span class="forgetPwd fz28 c66">忘记密码？</span>
+          	<!--toast-->
+          	
+		</div>
+		<script>
+			new Vue({
+				el:'#app',
+				data:function(){
+					return{
+						userip: '',
+			            username: '',
+			            userpwd:  '',
+			            isEidt : true,
+					}
+				},
+				computed: {
+		            user() {
+			            const { username, userpwd } = this
+			            return {
+			                username,
+			                userpwd
+			           	}
+			        }
+			    },
+		        watch:{
+		            user: {
+			            handler: function(val) {
+			                if(val.username && val.userpwd){
+			                  this.isEidt = false
+			                }else {
+			                  this.isEidt = true
+			                }
+			            },
+			            deep: true
+		            }
+		        },
+		        methods:{
+		        	login:function(){
+		        		if(!this.username){
+	                    	mui.toast('账号不能为空')
+	                    	return;
+		        		}
+		        		if(!this.userpwd){
+		                  	mui.toast('密码不能为空');
+		                  	return;
+		                }
+//		        		App.send('page/package/index.html', 'update');
+//						App.send('page/my/index.html', 'update');
+//						App.send('page/class/index.html', 'update');
+						
+//						var h=plus.webview.getLaunchWebview();
+//						console.log(h.id);
+//						App.send(h.id,'update')
+		        		App.http('techer/login/login',{
+		        			techer_number : this.username,
+                          	pwd : this.userpwd,
+						    type : 3
+		        		},function(data,status){	
+		        			if(data.status != 1){
+		        				mui.toast(data.msg);
+		        				return;
+		        			}
+		        			App.setItem('token', data.data.token);
+		        			App.setItem("userid",data.data.userinfo.id);
+							this.username = '';
+							this.userpwd = ''; 
+							//更新数据 
+							App.send('page/package/index.html', 'update');
+							App.send('page/my/index.html', 'update');
+							App.send('page/class/index.html', 'update');
+							App.send('page/my/userInfo', 'update');
+							var h=plus.webview.getLaunchWebview();
+							App.send(h.id,'update')
+							var index=plus.webview.getLaunchWebview();//获得初始窗口
+							plus.webview.show(index);//打开初始窗口 
+		        		}.bind(this))
+	               }
+		        }
+			})
+		</script>
+	</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	    <title></title>
+	  	<script type="text/javascript" src="../../js/mui.min.js" ></script>
+	    <link rel="stylesheet" href="../../css/mui.css" />
+	    <link rel="stylesheet" href="../../css/main.css" />
+	    <link rel="stylesheet" href="../../css/iconfont.css" />
+	    <script type="text/javascript" src="../../js/html-size-calculation.js" ></script>
+	    <style>
+	    	
+	    </style>
+	</head>
+	<body class="bg-grey">
+		<div id="app">
+			<header class="header">
+				<h2>我的</h2>
+			</header>
+			<div class="fix-bd">
+				<div class="mui-table-view-cell" to="my/userInfo" title="none">
+					<div class="plr30 bgff ub ub-ac pt40 pb30">
+						<div class="e-head">
+							<img  :src="avatar ? avatar : '../../images/default-pic.png'" alt="" />
+						</div>
+						<div class="ub-f1 plr30 ub-te">
+							<p class="fz44 c32 fw-b ub-te" v-text="data.techer_name"></p>
+							<p class="fz24 c99 pt20 ub-te">工号：<span v-text="data.techer_number"></span></p>
+						</div>
+						<div class="e-icon e-arrow"></div>
+					</div>
+				</div>
+				<ul class="mt20 bgff e-userHome">
+					<li class="mui-table-view-cell" to="my/modifyPwd" title="none">
+						<div class="bb pr30 ub ub-ac ptb40 ">
+							<div class="e-icon e-pwd"></div>
+							<p class="fz32 c32 pl35">修改密码</p>
+						</div>
+					</li>
+					<!--<li class="mui-table-view-cell">
+						<div class=" pr30 ub ub-ac ptb40 ">
+							<div class="e-icon e-help"></div>
+							<p class="fz32 c32 pl35">使用帮助</p>
+						</div>
+					</li>-->
+					<li class="mui-table-view-cell" to="my/quest" title="none">
+						<div class=" pr30 ub ub-ac ptb40 ">
+							<div class="e-icon e-questFack"></div>
+							<p class="fz32 c32 pl35">问题反馈</p>
+						</div>
+					</li>
+				</ul>
+				<ul class="mt20 bgff pl30" to="my/aboutUs" title="none">
+					<li class="mui-table-view-cell">
+						<div class="pr30 ub ub-ac ptb40 ">
+							<div class="e-icon e-about"></div>
+							<p class="fz32 c32 pl35">关于我们</p>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<script>
+			new Vue({
+				el:'#app',
+				data:function(){
+					return{
+						data : {},
+            			avatar : ''
+					}
+				},
+				methods:{
+					getuser:function(){
+						App.http('apply/user/info',{
+							"auth-token" : App.getItem("token")
+						},function(data,status){
+							var str = App.config.server+''+data.data.avatar;
+                        	this.avatar  = str.replace(/\\/g,"/");
+							this.data = data.data
+						}.bind(this),'get')
+					}
+				},
+				mounted:function(){
+					this.getuser();
+					//状态更改监听
+					App.request('update', function() {
+						this.getuser();
+						App.send('my/userInfo', 'update');
+					}.bind(this));
+				}
+			})
+		</script>
+	</body>
+</html>

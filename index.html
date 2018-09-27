@@ -15,15 +15,15 @@
 </head>
 <body>
 	<nav class="mui-bar mui-bar-tab">
-	    <a class="mui-tab-item mui-active">
+	    <a id="defaultTab" class="mui-tab-item mui-active" href="page/package/index.html">
 	        <span class="mui-icon iconfont icon-e-pack-check"></span>
 	        <span class="mui-tab-label">课件包</span>
 	    </a>
-	    <a class="mui-tab-item">
+	    <a class="mui-tab-item" href="page/class/index.html">
 	        <span class="mui-icon iconfont icon-e-class"></span>
 	        <span class="mui-tab-label">课程表</span>
 	    </a>
-	    <a class="mui-tab-item">
+	    <a class="mui-tab-item" href="page/my/index.html">
 	        <span class="mui-icon iconfont icon-e-my"></span>
 	        <span class="mui-tab-label">我的</span>
 	    </a>
@@ -71,7 +71,7 @@
 //	判断是否登陆 
 	if(token == null) {
 		var page = {
-			"url": "my/login/login",
+			"url": "my/login",
 			"title": "none",
 			"ani": "none"
 		};
@@ -80,78 +80,78 @@
 		});
 	}
 	mui.plusReady(function() {
-		upDevice();
+//		upDevice();
 		/**
 		 * 打开应用时 清空角标
 		 */
 		plus.runtime.setBadgeNumber(0);
 		//plus.push.setAutoNotification(false);
 
-		/**
-		 * 消息推送处理
-		 */
-		plus.push.addEventListener("receive", function(msg) {
-			if(typeof msg.payload != 'object') {
-				msg.payload = JSON.parse(msg.payload);
-			}
-			//android 下面收到消息就创建一个本地消息
-			if(plus.os.name != "iOS" && App.getItem('isBackground') == true) {
-				plus.push.createMessage(msg.payload.content, "LocalMSG", {
-					title: msg.payload.title
-				});
-			}
-			if(App.getItem('isBackground') != true) {
-
-				//打开远程地址
-				if(msg.payload.url.indexOf('http') == 0) {
-					/**
-					 * 如果是内部弹窗
-					 */
-					if(msg.payload.type == 'dialog') {
-						App.openRDialogUrl(msg.payload.url);
-						return;
-					}
-					mui.confirm(msg.payload.content, msg.payload.title, ['查看', '关闭'], function(type) {
-
-						if(type.index == 0) {
-							App.openRurl(msg.payload.url);
-						}
-					})
-					return;
-				}
-
-				App.openPushDialog(msg.payload.content);
-
-			}
-
-		}, false);
-		/**
-		 * ios单独处理
-		 */
-		plus.push.addEventListener("click", function(msg) {
-			if(typeof msg.payload != 'object') {
-				msg.payload = JSON.parse(msg.payload);
-			}
-			plus.push.clear();
-			//打开远程地址
-			if(msg.payload.url.indexOf('http') == 0) {
-				/**
-				 * 如果是内部弹窗
-				 */
-				if(msg.payload.type == 'dialog') {
-					App.openRDialogUrl(msg.payload.url);
-					return;
-				}
-				mui.confirm(msg.payload.content, msg.payload.title, ['查看', '关闭'], function(type) {
-					if(type.index == 0) {
-						App.openRurl(msg.payload.url);
-					}
-				})
-				return;
-			}
-			App.openPushDialog(msg.payload.content);
-
-		}, false);
+//		/**
+//		 * 消息推送处理
+//		 */
+//		plus.push.addEventListener("receive", function(msg) {
+//			if(typeof msg.payload != 'object') {
+//				msg.payload = JSON.parse(msg.payload);
+//			}
+//			//android 下面收到消息就创建一个本地消息
+//			if(plus.os.name != "iOS" && App.getItem('isBackground') == true) {
+//				plus.push.createMessage(msg.payload.content, "LocalMSG", {
+//					title: msg.payload.title
+//				});
+//			}
+//			if(App.getItem('isBackground') != true) {
+//
+//				//打开远程地址
+//				if(msg.payload.url.indexOf('http') == 0) {
+//					/**
+//					 * 如果是内部弹窗
+//					 */
+//					if(msg.payload.type == 'dialog') {
+//						App.openRDialogUrl(msg.payload.url);
+//						return;
+//					}
+//					mui.confirm(msg.payload.content, msg.payload.title, ['查看', '关闭'], function(type) {
+//
+//						if(type.index == 0) {
+//							App.openRurl(msg.payload.url);
+//						}
+//					})
+//					return;
+//				}
+//
+//				App.openPushDialog(msg.payload.content);
+//
+//			}
+//
+//		}, false);
+//		/**
+//		 * ios单独处理
+//		 */
+//		plus.push.addEventListener("click", function(msg) {
+//			if(typeof msg.payload != 'object') {
+//				msg.payload = JSON.parse(msg.payload);
+//			}
+//			plus.push.clear();
+//			//打开远程地址
+//			if(msg.payload.url.indexOf('http') == 0) {
+//				/**
+//				 * 如果是内部弹窗
+//				 */
+//				if(msg.payload.type == 'dialog') {
+//					App.openRDialogUrl(msg.payload.url);
+//					return;
+//				}
+//				mui.confirm(msg.payload.content, msg.payload.title, ['查看', '关闭'], function(type) {
+//					if(type.index == 0) {
+//						App.openRurl(msg.payload.url);
+//					}
+//				})
+//				return;
+//			}
+//			App.openPushDialog(msg.payload.content);
+//
+//		}, false);
 
 	});
 	//前台进入后台
@@ -175,7 +175,6 @@
 	 * 退出登录事件
 	 * */
 	App.request('update',function(){
-		
 		var defaultTab = document.getElementById("defaultTab");
 	    //模拟首页点击
 	    mui.trigger(defaultTab, 'tap');

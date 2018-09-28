@@ -12,59 +12,230 @@
 	</head>
 	<style>
 		body{
+			width: 100%;
+			/*overflow-x: hidden;*/
+		}
+		.fix-bd{
+			
+		}
+		#refreshContainer{
+			width: 100%;
 			overflow-x: hidden;
 		}
 	</style>
 	<body class="bg-grey">
-		<header class="header">
-			<h2>课件包</h2>
-			<div class="e-icon e-code hd-right"></div>
-		</header>
-		<div class="fix-bd">
-			<div class="plr30 bb bgff">
-				<div class="e-search">
-					<input type="text" name="" id="" value="" />
-					<i class="e-icon e-search-btn"></i>
+		<div id="app">
+			<header class="header">
+				<h2>课件包</h2>
+				<div class="e-icon e-code hd-right"></div>
+			</header>
+			<div class="fix-bd">
+				<div class="plr30 bb bgff">
+					<div class="e-search">
+						<input type="text" name="" id="" value="" v-model="search_info" v-on:input="searchBtn"/>
+						<i class="e-icon e-search-btn"></i>
+					</div>
+				</div>
+				<div class="plr30 bgff e-publicHd bb">
+					<p class="fz32 c33">上课</p>
+				</div>
+				<div class="plr30 bgff">
+					<p class="fz32 c32 fw-b word-break pt25" v-text="course_name"></p>
+					<p class="fz32 c66 word-break pt10 pb25" v-text="ware_name"></p>
+				</div>
+				<div class="plr30 bgff e-publicHd bb mt20">
+					<p class="fz32 c33">课件包</p>
+				</div>
+				<!--下拉刷新-->
+				<div id="refreshContainer" class="mui-content mui-scroll-wrapper">
+					<div class="mui-scroll">
+					    <!--数据列表-->
+					    <ul class="mui-table-view mui-table-view-chevron">
+					      	<li class="list-item "  data-type="0"  v-for="(item,index) in list ">
+						        <div class="list-box" @touchstart.capture="touchStart" @touchend.capture="touchEnd" @click="skip(item)">
+						            <div class="package_info bgff  word-break">
+						                <h2 class="fz32 c32 fw-b word-break" v-text="item.course_name"></h2>
+						                <p class="fz32 c66 word-break pt10" v-text="item.courseware_name"></p>
+						            </div>
+						        </div>
+						        <div class="delete"  :data-index="index">
+						            <div @click="setBegins(item)" class="setClass"  v-if="index != isdelet">设为上课</div>
+						            <div @click="deleteItem(index)" v-if="index != isdelet">删除</div>
+						            <div @click="deleteSure(index,item)" class="sureDelete" v-else>确认删除</div> 
+						        </div>
+					        </li>
+					    </ul>
+					</div>
 				</div>
 			</div>
-			<div class="plr30 bgff e-publicHd bb">
-				<p class="fz32 c33">上课</p>
-			</div>
-			<div class="plr30 bgff">
-				<p class="fz32 c32 fw-b word-break pt25">高等数学</p>
-				<p class="fz32 c66 word-break pt10 pb25">第二章 2.4 综合性学习·写作·口语 交际</p>
-			</div>
-			<div class="plr30 bgff e-publicHd bb mt20">
-				<p class="fz32 c33">课件包</p>
-			</div>
-			<ul>
-		        <li class="list-item "  data-type="0">
-			        <div class="list-box" @touchstart.capture="touchStart" @touchend.capture="touchEnd" @click="skip(item)">
-			            <div class="package_info bgff  word-break">
-			                <h2 class="fz32 c32 fw-b word-break">高等数学</h2>
-			                <p class="fz32 c66 word-break pt10">第二章 2.4 综合性学习·写作·口语 交际</p>
-			            </div>
-			        </div>
-			        <div class="delete"  :data-index="index">
-			            <div @click="setBegins(item)" class="setClass"  v-if="index != isdelet">设为上课</div>
-			            <div @click="deleteItem(index)" v-if="index != isdelet">删除</div>
-			            <div @click="deleteSure(index,item)" class="sureDelete" v-else>确认删除</div> 
-			        </div>
-		        </li>
-		        <li class="list-item "  data-type="0">
-			        <div class="list-box" @touchstart.capture="touchStart" @touchend.capture="touchEnd" @click="skip(item)">
-			            <div class="package_info bgff  word-break">
-			                <h2 class="fz32 c32 fw-b word-break">高等数学</h2>
-			                <p class="fz32 c66 word-break pt10">第二章 2.4 综合性学习·写作·口语 交际</p>
-			            </div>
-			        </div>
-			        <div class="delete"  :data-index="index">
-			            <div @click="setBegins(item)" class="setClass"  v-if="index != isdelet">设为上课</div>
-			            <div @click="deleteItem(index)" v-if="index != isdelet">删除</div>
-			            <div @click="deleteSure(index,item)" class="sureDelete" v-else>确认删除</div>
-			        </div>
-		        </li>
-		    </ul>
 		</div>
+		<script>
+			new Vue({
+				el:'#app',
+				data:function(){
+					return{
+						list:[],
+						startX : 0 ,
+	  					endX : 0 ,
+	  					search_info:'',
+	  					isdelet : -1,
+					}
+				},
+				computed:{
+			        ware_name(){
+			            let choose
+			            this.list.filter(function(item){
+				            if(item.status == 1){
+				                choose = item
+				                return
+				            }
+			            })
+			            if(choose){
+				            this.chooseId = choose
+				            return choose.courseware_name
+			
+			            }
+			          },
+			        course_name(){
+			            let choose
+			            this.list.filter(function(item){
+				            if(item.status == 1){
+				                choose = item
+				                return
+				            }
+			            })
+			            if(choose){
+			              return choose.course_name
+			            }
+			        }
+			
+			    },
+				methods:{
+					skip:function(item){
+			            if( this.checkSlide() ){
+			              this.restSlide();
+			            }else{
+			              	var page = {
+			              		"url":'package/courseware',
+			              		"title":'none',
+			              		"param":'{class_id:'+item.id+'}'
+			              	}
+			              	App.open(page)
+			            }
+			        },
+			           //滑动开始
+		            touchStart:function(e){
+		             	// 记录初始位置
+		            	this.startX = e.touches[0].clientX;
+		            },
+			           //滑动结束
+		            touchEnd:function(e){
+		                // 当前滑动的父级元素
+			            let parentElement = e.currentTarget.parentElement;
+			            // 记录结束位置
+			            this.endX = e.changedTouches[0].clientX;
+			                      // 左滑
+			            if( parentElement.dataset.type == 0 && this.startX - this.endX > 30 ){
+				            this.restSlide();
+				            parentElement.dataset.type = 1;
+			            }
+			                      // 右滑
+			            if( parentElement.dataset.type == 1 && this.startX - this.endX < -30 ){
+				            this.restSlide();
+				            parentElement.dataset.type = 0;
+			            }
+			            this.startX = 0;
+			            this.endX = 0;
+		            },
+			              //判断当前是否有滑块处于滑动状态
+			        checkSlide:function(){
+			            let listItems = document.querySelectorAll('.list-item');
+			            for( let i = 0 ; i < listItems.length ; i++){
+				            if( listItems[i].dataset.type == 1 ) {
+				             	return true;
+				            }
+				        }
+			            return false;
+			        },
+			        //复位滑动状态
+			        restSlide:function(){
+			            let listItems = document.querySelectorAll('.list-item');
+			                       // 复位
+			            for( let i = 0 ; i < listItems.length ; i++){
+			            listItems[i].dataset.type = 0;
+			            }
+			            this.isdelet = -1;
+			           },
+			           //删除
+			        deleteItem:function(index){
+			            this.isdelet = index;
+			        },
+			        //获取数据
+			        getList:function(){
+			        	App.http('teaching/index/coursewareBox',{
+			        		"auth-token" : App.getItem("token"),
+			        		"type" : 3,
+                       		"keywords" : this.search_info
+			        	},function(data,status){
+			        		this.list = data.data;
+			        		mui('#refreshContainer').pullRefresh().endPulldown();
+			        	}.bind(this),'get') 
+			        },
+			        //确定删除
+			        sureDelete:function(index,item){
+			        	this.deletId = item.id
+			            //  复位
+			            this.restSlide();
+			            //  删除
+			            this.list.splice(index,1);
+			            App.http('teaching/index/del',{
+			            	"id" : this.deletId,
+		                    "auth-token" : App.getItem("token"),
+		                    "type" : 3
+			            },function(data,status){
+			            	if(data.status != 1){
+			            		mui.toast(data.msg);
+			            		return;
+			            	}
+			            	this.deletId = '';
+			            	this.getList();
+			            	
+			            }.bind(this))
+			        },
+					// 搜索
+					searchBtn:function(){
+						this.getList();
+					}
+				},
+				mounted:function(){
+					mui.plusReady(function(){
+						this.getList();
+					}.bind(this))
+					
+					//状态更改监听
+					App.request('update', function() { 
+						this.getList();
+					}.bind(this));
+					mui.init({
+						pullRefresh: {
+							container: "#refreshContainer", //下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
+							down: {
+								style: 'circle', //必选，下拉刷新样式，目前支持原生5+ ‘circle’ 样式
+								color: '#2BD009', //可选，默认“#2BD009” 下拉刷新控件颜色
+								height: '50px', //可选,默认50px.下拉刷新控件的高度,
+								range: '100px', //可选 默认100px,控件可下拉拖拽的范围
+								offset: '0px', //可选 默认0px,下拉刷新控件的起始位置
+								auto: false, //可选,默认false.首次加载自动上拉刷新一次
+								callback: function() {
+									this.restSlide();
+									mui('#refreshContainer').pullRefresh().refresh(true);
+									this.getList();
+								}.bind(this)
+							}
+						}
+					});
+				}
+			})
+		</script>
 	</body>
 </html>

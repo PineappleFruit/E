@@ -3,62 +3,208 @@
 	<head>
 		<meta charset="utf-8">
 	    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	    <meta name="format-detection" content="telephone=no, email=no" />
 	    <title></title>
 	  	<script type="text/javascript" src="../../js/mui.min.js" ></script>
 	    <link rel="stylesheet" href="../../css/mui.css" />
+	    <!--日历-->
+	    <link rel="stylesheet" href="../../css/swiper.min.css" />
+	    <link rel="stylesheet" href="../../css/showcase.css" />
+	    <link rel="stylesheet" href="../../css/calendar_base.css" />
+	    <!--日历结束-->
 	    <link rel="stylesheet" href="../../css/main.css" />
 	    <link rel="stylesheet" href="../../css/iconfont.css" />
 	    <script type="text/javascript" src="../../js/html-size-calculation.js" ></script>
+	    <style>
+	    	.backToday{
+	    		background: #fff;
+	    		height: 100%;
+	    	}
+	    </style>
+	    
 	</head>
 	<body class="bg-grey">
-		<header class="header">
-			<h2>课程表</h2>
-			<div class="e-icon e-add hd-right"></div>
-		</header>
-		<div class="fix-bd">
-			<div class="e-class-hd bb ub ub-pac bgff">
-				<div class="e-prev"></div>
-				<span class="fz32 c33">2018年8月</span>
-				<div class="e-next"></div>
-			</div>
-			<div class="e-calendar bgff">
-				
-			</div>
-			<div class="mt20 bgff pl30">
-				<div class="e-today bb">今天</div>
-				<ul>
-					<li class="ub ub-ac bb ptb25">
-						<div class="fz28 c19">
-							<p class="fz28 c19">11:00</p>
-							<p class="fz28 c19 pt10">11:45</p>
-						</div>
-						<div class="ub-f1 fz28 c19 word-break">
-							<p class="fz28 c19">高等语文</p>
-							<p class="fz28 c19 pt10">三年级一班</p>
-						</div>
-					</li>
-					<li class="ub ub-ac bb ptb25">
-						<div class="fz28 c19">
-							<p class="fz28 c19">11:00</p>
-							<p class="fz28 c19 pt10">11:45</p>
-						</div>
-						<div class="ub-f1 fz28 c19 word-break">
-							<p class="fz28 c19">高等语文</p>
-							<p class="fz28 c19 pt10">三年级一班</p>
-						</div>
-					</li>
-					<li class="ub ub-ac bb ptb25">
-						<div class="fz28 c19">
-							<p class="fz28 c19">11:00</p>
-							<p class="fz28 c19 pt10">11:45</p>
-						</div>
-						<div class="ub-f1 fz28 c19 word-break">
-							<p class="fz28 c19">高等语文</p>
-							<p class="fz28 c19 pt10">三年级一班</p>
-						</div>
-					</li>
-				</ul>
+		<div id="app">
+			<header class="header">
+				<h2>课程表</h2>
+				<div class="e-icon e-add hd-right" to="class/addClass" title="none"></div>
+			</header>
+			<div class="fix-bd">
+				<div class="e-class-hd bb ub ub-pac bgff mid">
+					<div class="e-prev pre"></div>
+					<span class="fz32 c33 backToday" @tap="returnTady">2018年8月</span> 
+					<div class="e-next next" ></div>
+				</div>
+				<div class="e-calendar bgff">
+					<!--日历容器-->
+					<div id="calendar">
+						
+					</div>
+				</div>
+				<div class="mt20 bgff pl30">
+					<div class="e-today bb" v-text="isToday ? '今天' :  today">今天</div>
+					
+					<ul>
+						<li class="ptb35" v-if="list.length <= 0">
+							<button class="e-addClass" @tap="addClass">添加课程</button>
+						</li>
+						<li class="bb ptb25" v-for="item in list" to="class/editClass" title="none" v-bind:param="item | formatParam">
+							<div class="fz28 c19 ub ub-ac">
+								<p class="fz28 c19 e-min-width">{{timestampToTime(item.start_time)}}</p>
+								<p class="fz28 c19">{{item.course_name}}</p>
+							</div>
+							<div class="fz28 c19 ub ub-ac pt15">
+								<p class="fz28 c19 e-min-width">{{timestampToTime(item.end_time)}}</p>
+								<p class="fz28 c19">{{item.class_name}}</p>
+							</div>
+						</li>
+					</ul>
+				</div>
 			</div>
 		</div>
+		<script type="text/javascript" src="../../js/calendar_base.js" ></script>
+		<script type="text/javascript" src="../../js/swiper.min.js" ></script>
+		<script type="text/javascript" src="../../js/mustache.min.js" ></script>
+		<!--<script type="text/javascript" src="../../js/calendar_showcase.js"></script>-->
+		<script>
+			var vm = new Vue({
+				el:'#app',
+				data:function(){
+					return{
+						today:'',
+						todayDate:'',
+						list:[],
+						date:''
+					}
+				},
+				computed:{
+					isToday(){
+			            if(this.todayDate == this.today && this.today){
+			              return true
+			            }else {
+			              return false
+			            }
+			        },
+				},
+				methods:{
+					getTrip:function(){
+						App.http('basic/Schedule/lists',{
+							"auth-token" : App.getItem("token"),
+							"type" : 3,
+                      		"datetime" : this.today
+						},function(data,status){
+							this.list = data.data.list;
+							this.date = data.data.datetime;
+							console.log(JSON.stringify(this.list))
+						}.bind(this),'get')
+					},
+					getNowDate:function(){
+						var date = new Date();
+						var year = date.getFullYear();
+						var month = date.getMonth() + 1;
+						var day = date.getDate();
+						if (month < 10) {
+						    month = "0" + month;
+						}
+						if (day < 10) {
+						    day = "0" + day;
+						}
+						var nowDate = year + "-" + month + "-" + day;
+						return nowDate
+					},
+					timestampToTime:function(timestamp){
+						var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+				        var Y = date.getFullYear() + '-';
+				        var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+				        var D = date.getDate() + ' ';
+				        var h = date.getHours() + ' : ';
+				        var m = date.getMinutes();
+				        var s = date.getSeconds();
+				        return h+m;
+					},
+					/**
+					 * 日历
+					 * */
+					customBiz:function(){
+						var self = this;
+						// 初始化日历
+				
+						var calendar = new Calendar({
+							// swiper滑动容器
+							container: "#calendar",
+							// 上一月节点
+							pre: ".pre",
+							// 下一月节点
+							next: ".next",
+							// 回到今天
+							backToToday: ".backToday",
+							// 业务数据改变
+							dataRequest: function(currdate, callback, _this) {
+								// 无日程安排
+								var data = [];
+								callback && callback(data);
+							},
+							// 点击日期事件
+							onItemClick: function(item) {
+								var defaultDate = item.date;
+								// 设置标题
+								setTitle(defaultDate);
+								self.today = defaultDate;
+								self.getTrip();
+							},
+							// 滑动回调
+							swipeCallback: function(item) {
+								var defaultDate = item.date;
+								// 设置标题
+								setTitle(defaultDate);
+								
+								// 动态新增点击样式
+								calendar.addActiveStyleFordate(defaultDate);
+								
+							},
+							// 调试
+							isDebug: false
+						});
+						// 设置标题
+						var titleNode = document.querySelector('.mid span');
+						
+						function setTitle(date) {
+							titleNode.innerText = date;
+						}
+					},
+					returnTady:function(){
+						this.getTrip();
+						this.today = this.todayDate
+					},
+					addClass:function(){
+						var date = new Date(this.today);
+						var time1 = date.getTime();
+						var page={
+						'url':'class/addClass',
+						'title':'none',
+						'param':'{dataId:'+parseInt(time1)+'}' 
+					}
+					App.open(page)
+					}
+				},
+				filters:{
+					formatParam: function(item) {
+//						return '{start_time:' + item.start_time + 'end_time:' + item.end_time + '}';
+						return '{defaultDate:' + JSON.stringify(item) + '}';
+					},
+				},
+				mounted:function(){
+					mui.plusReady(function(){
+						this.getTrip();
+						this.todayDate = this.getNowDate();
+						this.today = this.getNowDate();
+					}.bind(this));
+					App.request('update', function() {
+						this.getTrip();
+					}.bind(this));
+					this.customBiz();
+				}
+			})
+		</script>
 	</body>
 </html>

@@ -11,19 +11,38 @@
 	    <script type="text/javascript" src="../../js/html-size-calculation.js" ></script>	
 	</head>
 	<body>
-		<header class="header">
-			<div class="e-icon e-back hd-left"></div>
-			<h2>关于我们</h2>
-		</header>
-		<div class="fix-bd">
-			<div class="e-content">
-				<div class="e-icon e-aboutLogo"></div>
-				<p class="tx-c fz28 c32 mt25">版本：1.0</p>
-			</div>
-			<div class="footer tx-c">
-				<p class="fz28 c99">四川变体科技有限公司版权所有</p>
-				<p class="fz28 c99">E.WORK copyright@2018 变体科技</p>
+		<div id="app">
+			<header class="header">
+				<div class="e-icon e-back hd-left" @tap="mui.back()"></div>
+				<h2>关于我们</h2>
+			</header>
+			<div class="fix-bd">
+				<div class="e-content">
+					<div class="e-icon e-aboutLogo"></div>
+					<p class="tx-c fz28 c32 mt25">版本：{{version}}</p>
+				</div>
+				<div class="footer tx-c">
+					<p class="fz28 c99">四川变体科技有限公司版权所有</p>
+					<p class="fz28 c99">E.WORK copyright@2018 变体科技</p>
+				</div>
 			</div>
 		</div>
+		<script>
+			new Vue({
+				el:'#app',
+				data:function(){
+					return{
+						version:''
+					}
+				},
+				mounted:function(){
+					mui.plusReady(function(){
+						this.version = plus.runtime.version;
+						console.log(this.version)
+					}.bind(this))
+					
+				}
+			})
+		</script>
 	</body>
 </html>

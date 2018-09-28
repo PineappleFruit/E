@@ -613,6 +613,10 @@ table {
 .c19 {
   color: #191a1e; }
 
+.ptb35 {
+  padding-top: 0.9333333333rem;
+  padding-bottom: 0.9333333333rem; }
+
 .ub {
   display: -webkit-box;
   display: box;
@@ -988,9 +992,17 @@ a {
   height: 2.3466666667rem;
   bottom: 0; }
 
+.fix-search {
+  position: fixed;
+  z-index: 9999;
+  width: 100%;
+  top: 3.4133333333rem;
+  left: 0; }
+
 .e-search {
   position: relative;
-  padding: 0.5333333333rem 0 0.4533333333rem; }
+  padding: 0.5333333333rem 0 0;
+  height: 2.56rem; }
   .e-search input {
     width: 100%;
     height: 1.5466666667rem;
@@ -1012,6 +1024,9 @@ a {
     -webkit-transform: translateY(-50%);
     -o-transform: translateY(-50%);
     transform: translateY(-50%); }
+
+.fix-search-box {
+  padding-top: 2.56rem; }
 
 .e-publicHd {
   height: 2.9333333333rem; }
@@ -1038,7 +1053,7 @@ a {
   transform: translate3d(0, 0, 0); }
 
 .list-item[data-type="1"] {
-  transform: translate3d(-2rem, 0, 0); }
+  transform: translate3d(-9.36rem, 0, 0); }
 
 .list-item {
   position: relative;
@@ -1097,7 +1112,8 @@ a {
 
 .setClass {
   background: grey;
-  font-size: 0.8533333333rem; }
+  font-size: 0.8533333333rem;
+  width: 5.6rem; }
 
 .e-pdf {
   width: 1.8933333333rem;
@@ -1111,7 +1127,7 @@ a {
   height: 100;
   font-size: 0.96rem;
   bottom: 0;
-  color: #ccc; }
+  color: #00d589; }
 
 .class-hd-left {
   left: 0;
@@ -1120,7 +1136,10 @@ a {
 .class-hd-right {
   right: 0;
   padding-right: 0.8rem;
-  text-align: right; }
+  text-align: right;
+  color: #ccc; }
+  .class-hd-right.active {
+    color: #00d589; }
 
 .e-classItem {
   height: 2.4rem;
@@ -1266,9 +1285,6 @@ a {
   background-position: center;
   background-size: 0.8533333333rem 0.8533333333rem; }
 
-.e-calendar {
-  height: 17.0133333333rem; }
-
 .e-today {
   height: 2.0533333333rem;
   line-height: 2.0533333333rem;
@@ -1283,5 +1299,40 @@ a {
 
 .e-userHome .mui-table-view-cell {
   padding-left: 0.8rem; }
+
+.e-coursePic {
+  width: 1.8666666667rem;
+  height: 2.1333333333rem;
+  overflow: hidden; }
+  .e-coursePic img {
+    width: 100%;
+    height: 100%; }
+
+.e-min-width {
+  width: 5.0666666667rem; }
+
+.e-addClass {
+  width: 4rem;
+  height: 1.6rem;
+  line-height: 1.6rem;
+  border: 1px solid #d7d7d7;
+  border-radius: 0.0533333333rem;
+  font-size: 0.7466666667rem;
+  color: #00d589; }
+
+/*****************modify rili*****************/
+.em-calendar-content .em-calendar-item .day {
+  font-size: 0.8533333333rem;
+  color: #323232; }
+
+.em-calendar-content .em-calendar-item .lunar {
+  font-size: 0.5333333333rem;
+  color: #999; }
+
+.em-calendar-active {
+  background-color: #00d589; }
+
+.em-calendar-content .em-calendar-active .day, .em-calendar-content .em-calendar-active .lunar {
+  color: #fff; }
 
 /*# sourceMappingURL=main.css.map */

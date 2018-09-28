@@ -166,6 +166,21 @@
 					"page/my/modifyPwdSuccess.html"
 				],
 				"priority": 0
+			},
+			"page/package/index.html": {
+				"resources": [],
+				"refer": [
+					"page/package/courseware.html"
+				],
+				"priority": 0
+			},
+			"page/class/index.html": {
+				"resources": [],
+				"refer": [
+					"page/class/addClass.html",
+					"page/class/editClass.html"
+				],
+				"priority": 0
 			}
 		},
 		"idle": {
@@ -178,7 +193,6 @@
 				"images/e-html.png",
 				"images/e-txt.png",
 				"images/prev-btn-checked.png",
-				"page/package/courseware.html",
 				"css/iconfont.css",
 				"fonts/iconfont.ttf",
 				"js/mui.js",
@@ -200,7 +214,6 @@
 				"images/e-forget-back.png",
 				"images/prev-btn.png",
 				"images/seach_btn.png",
-				"page/class/addClass.html",
 				"images/e-pwdSuccess.png",
 				"sass/common.scss",
 				"css/grid.css",
@@ -220,8 +233,7 @@
 				"images/next-btn.png",
 				"images/e-psd.png",
 				"images/e-resetSuccess.png",
-				"css/reset.css",
-				"page/class/editClass.html"
+				"css/reset.css"
 			]
 		}
 	}

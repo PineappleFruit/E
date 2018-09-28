@@ -28,5 +28,16 @@
 		"refer": [
 			"page/my/modifyPwdSuccess.html"
 		]
+	},
+	"page/package/index.html": {
+		"refer": [
+			"page/package/courseware.html"
+		]
+	},
+	"page/class/index.html": {
+		"refer": [
+			"page/class/addClass.html",
+			"page/class/editClass.html"
+		]
 	}
 }

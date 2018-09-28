@@ -13,14 +13,14 @@
 	<body>
 		<div id="app">
 			<header class="header">
-				<div class="e-icon e-back hd-left"></div>
+				<div class="e-icon e-back hd-left" @tap="mui.back()"></div>
 				<h2>问题反馈</h2>
 			</header>
 			<div class="fix-bd">
 				<div class="plr30">
 					<div class="fz32 c32 ptb30">问题描述</div>
 					<div class="e-quest">
-						<textarea v-model="textarea_box"></textarea>
+						<textarea v-model="textarea_box" maxlength="500"></textarea>
 						<span class="fz28 ccc">{{500 - textarea_box.length}}/500</span>
 					</div>
 					<div class="btn btn-green" @tap="quesReturn">提交</div>
@@ -47,7 +47,7 @@
 								mui.toast(data.msg);
 								return 
 							}
-							mui.toast('修改成功');
+							mui.toast('提交成功');
 							mui.back();
 						})
 					}

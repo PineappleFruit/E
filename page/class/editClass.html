@@ -8,68 +8,206 @@
 	    <link rel="stylesheet" href="../../css/mui.css" />
 	    <link rel="stylesheet" href="../../css/main.css" />
 	    <link rel="stylesheet" href="../../css/iconfont.css" />
+	    <link rel="stylesheet" href="../../css/mui.picker.min.css" />
 	    <script type="text/javascript" src="../../js/html-size-calculation.js" ></script>
+	    <script type="text/javascript" src="../../js/mui.picker.min.js" ></script>
 	</head>
 	<style>
 		.header{
 			background: #fff;
+			z-index: 997;
 		}
 		.header h2{
 			color: #333;
 		}
+		input[type='submit'], .mui-btn-primary, .mui-btn-blue{
+			border: 1px solid #00d589;
+    		background-color: #00d589;
+		}
 	</style>
 	<body class="bg-grey">
-		<header class="header bb">
-			<div class="class-hd class-hd-left">取消</div>
-			<h2 class="">新建课程表</h2>
-			<div class="class-hd class-hd-right">完成</div>
-		</header>
-		<div class="fix-bd">
-			<div class="ub ub-ac e-classItem bgff">
-				<input type="text" name="" id="" value=""  class="ub-f1" placeholder="请输入课程名称"/>
-				<span class="e-icon e-arrow"></span>
-			</div>
-			<div class="ub ub-ac e-classItem bgff">
-				<input type="text" name="" id="" value=""  class="ub-f1" placeholder="请选择班级"/>
-				<span class="e-icon e-arrow"></span>
-			</div>
-			<div class="ub bb ub-ac p30 bgff">
-				<div class="ub-f1">
-					<p class="fz28 c66">开始</p>
-					<p class="fz28 c66 pt20">2018年08月26日</p>
+		<div id="app">
+			<header class="header bb">
+				<div class="class-hd class-hd-left" @tap="mui.back()">取消</div>
+				<h2 class="">编辑课程表</h2>
+				<div class="class-hd class-hd-right">完成</div>
+			</header>
+			<div class="fix-bd">
+				<div class="ub ub-ac e-classItem bgff" @tap="chooseCourse">
+					<input type="text" name="" id="" value=""  class="ub-f1" placeholder="请输入课程名称" v-model="cousreItem ? cousreItem :  defaultDate.course_name" readonly="readonly"/>
+					<span class="e-icon e-arrow"></span>
 				</div>
-				<span class="e-icon e-arrow"></span>
-			</div>
-			<div class="ub bb ub-ac p30 bgff">
-				<div class="ub-f1">
-					<p class="fz28 c66">结束</p>
-					<p class="fz28 c66 pt20">2018年08月26日</p>
+				<div class="ub ub-ac e-classItem bgff" @tap="chooseClass">
+					<input type="text" name="" id="" value=""  class="ub-f1" placeholder="请选择班级" v-model="classItem ? classItem : defaultDate.class_name" readonly="readonly"/>
+					<span class="e-icon e-arrow"></span>
 				</div>
-				<span class="e-icon e-arrow"></span>
+				<div class="ub bb ub-ac p30 bgff" @tap="startTime">
+					<div class="ub-f1">
+						<p class="fz28 c66">开始</p>
+						<p class="fz28 c66 pt20" v-text="start ? start : timestampToTime(defaultDate.start_time)">2018年08月26日</p>
+					</div>
+					<span class="e-icon e-arrow"></span>
+				</div>
+				<div class="ub bb ub-ac p30 bgff" @tap="endTime">
+					<div class="ub-f1">
+						<p class="fz28 c66">结束</p>
+						<p class="fz28 c66 pt20" v-text="end ? end : timestampToTime(defaultDate.end_time)">2018年08月26日</p>
+					</div>
+					<span class="e-icon e-arrow"></span>
+				</div>
 			</div>
+			<div class="fixed-bt" @tap="deleteClass">删除课程</div>
+			<!--提示-->
+		    <div class="masking-info" v-if="isAttes">
+			    <div class="dialog"></div>
+		        <div class="mask-con">
+		        	<p class="mask-con-title">取消后，将不保存编辑内容</p>
+			        <div class="mask-con-btn">
+			          <div class="c-green" @click="isAttes = false">留在此页</div>
+			          <div class="fz32 c-green" @click="sureCancle">确认取消</div>
+			        </div>
+			    </div>
+		    </div>
+		    <!-- 删除提示 -->
+		    <div class="masking-info" v-if="isDelet">
+			    <div class="dialog"></div>
+		      	<div class="mask-con">
+			        <p class="mask-con-title">删除后，课程将不可恢复  </p>
+			        <div class="mask-con-btn">
+			          <div class="c-green" @click="isDelet = false">留在此页</div>
+			          <div class="fz32 c-green" @click="sureDelet">确认删除</div>
+			        </div>
+			    </div>
+		    </div>
 		</div>
-		<div class="fixed-bt">删除课程</div>
-		<!--提示-->
-	    <div class="masking-info" v-if="isAttes">
-		    <div class="dialog"></div>
-	        <div class="mask-con">
-	        	<p class="mask-con-title">取消后，将不保存编辑内容</p>
-		        <div class="mask-con-btn">
-		          <div class="c-green" @click="isAttes = false">留在此页</div>
-		          <div class="fz32 c-green" @click="sureCancle">确认取消</div>
-		        </div>
-		    </div>
-	    </div>
-	    <!-- 删除提示 -->
-	    <div class="masking-info" v-if="isDelet">
-		    <div class="dialog"></div>
-	      	<div class="mask-con">
-		        <p class="mask-con-title">删除后，课程将不可恢复  </p>
-		        <div class="mask-con-btn">
-		          <div class="c-green" @click="isDelet = false">留在此页</div>
-		          <div class="fz32 c-green" @click="sureDelet">确认删除</div>
-		        </div>
-		    </div>
-	    </div>
+		<script>
+			new Vue({
+				el:'#app',
+				data:function(){
+					return{
+						isAttes:false,
+						isDelet:false,
+						defaultDate:'',
+						cousreItem:'',
+			            courseId:'',
+			            classItem:'',
+			            classId:'',
+			            start : '',
+            			end : '',
+            			courseList:[],
+            			classList:[],
+					}
+				},
+				methods:{
+					timestampToTime:function(timestamp) {
+				        var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+				        var Y = date.getFullYear() + '-';
+				        var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+				        var D = date.getDate() + ' ';
+				        var h = date.getHours() + ':';
+				        var m = date.getMinutes() + ':';
+				        var s = date.getSeconds();
+				        return Y+M+D+h+m+s;
+				    },
+				    getlist:function(){
+						App.http('platform/attendance/chooseCoursesClass',{
+							"auth-token" : App.getItem("token"),
+						},function(data,status){
+							console.log(JSON.stringify(data.data))
+							let courseItem
+		                    data.data.course.forEach(function(item,index){
+		                        courseItem = {
+		                          value : item.id,
+		                          text : item.course_name
+		                        }
+		                        this.courseList.push(courseItem)
+		                    }.bind(this))
+		                    let classItem
+		                    data.data.class.forEach(function(item,index){
+		                        classItem = {
+		                          value : item.id,
+		                          text : item.class_name
+		                        }
+		                        this.classList.push(classItem)
+		                    }.bind(this))
+						}.bind(this),'get')
+					},
+					chooseCourse:function(){
+						var picker4 = new mui.PopPicker();
+		                picker4.setData(this.courseList);
+		                picker4.show(function (selectItems) {
+		                    this.cousreItem = selectItems[0].text;
+		                    this.courseId = selectItems[0].value
+		                }.bind(this))
+					},
+					chooseClass:function(){
+						var picker3 = new mui.PopPicker();
+			            picker3.setData(this.classList);
+			            picker3.show(function (selectItems) {
+			                this.classItem = selectItems[0].text;
+			                this.classId = selectItems[0].value
+			            }.bind(this))
+					},
+					startTime:function(){
+			            var dtPicker = new mui.DtPicker({
+			            	type: 'datetime',
+			                beginDate: new Date(2018) //设置开始日期
+			                //   endDate: new Date(2016)//设置结束日期
+			            });
+			            console.log(this.defaultDate);
+			            if(this.defaultDate){
+			                dtPicker.setSelectedValue(this.timestampToTime(this.defaultDate.start_time))
+			            }
+			            dtPicker.show(function(selectItems) {
+			    			this.start = selectItems.y.value + '-' + selectItems.m.value + '-' + selectItems.d.value +'   '+ selectItems.h.value + ':' + selectItems.i.value ;
+			            }.bind(this))
+		            },
+		            endTime:function(){
+		              	var dtPicker2 = new mui.DtPicker({
+		              	type: 'datetime',
+		              	beginDate: new Date(2018) //设置开始日期
+		                //   endDate: new Date(2016)//设置结束日期
+		              	});
+		              	if(this.defaultDate){
+		                	dtPicker2.setSelectedValue(this.timestampToTime(this.defaultDate.end_time))
+		              	}
+		              	dtPicker2.show(function(selectItems) {
+		                    this.end = selectItems.y.value + '-' + selectItems.m.value + '-' + selectItems.d.value +'   '+ selectItems.h.value + ':' + selectItems.i.value ;	
+		              	}.bind(this))
+		            },
+		            deleteClass:function(){
+		            	this.isDelet = true
+		            },
+		            sureDelet:function(){
+		            	App.http('basic/Schedule/del',{
+		            		"auth-token" : App.getItem("token"),
+                        	"id" :  this.defaultDate.id
+		            	},function(data,status){
+		            		if(data.status != 1){
+		            			mui.toast(data.msg);
+		            			return
+		            		}
+		            		this.start = '';
+		                    this.end = '';
+		                    this.cousreItem = '';
+		                    this.classId = '';
+		                    this.courseId = '';
+		                    this.classItem = '';
+		                    App.send('page/class/index.html','update');
+		                    mui.toast('删除成功')
+		                    mui.back();
+		                    
+		            	}.bind(this))
+		            }
+				},
+				mounted:function(){
+					mui.plusReady(function() {
+			        	var self = plus.webview.currentWebview();
+			        	this.defaultDate = self.defaultDate;
+			        	
+			        }.bind(this))
+				}
+			})
+		</script>
 	</body>
 </html>

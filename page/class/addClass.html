@@ -102,6 +102,7 @@
 						App.http('platform/attendance/chooseCoursesClass',{
 							"auth-token" : App.getItem("token"),
 						},function(data,status){
+							console.log(JSON.stringify(data.data))
 							let courseItem
 		                    data.data.course.forEach(function(item,index){
 		                        courseItem = {
@@ -111,7 +112,7 @@
 		                        this.courseList.push(courseItem)
 		                    }.bind(this))
 		                    let classItem
-		                    data.data.class.forEach(function(item,index){
+		                    data.data.class.forEach(function(item,index){ 
 		                        classItem = {
 		                          value : item.id,
 		                          text : item.class_name

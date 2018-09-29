@@ -628,6 +628,75 @@ a{
     font-size: r(28);
     color: #00d589;
 }
+.e-deng{
+    width: r(100);
+    height: r(88);
+    background-image: url(../images/deng.png);
+    background-size: r(32) r(32);
+    background-position: center;
+}
+#bcid{          
+    width: 100%;
+    height: 100%;       
+    position: absolute;         
+    background: #000000;  
+//  margin-top: r(128);
+//  margin-bottom: 44px;  
+}   
+.fbt{                    
+    width: 50%;         
+    background-color: #ffffff;          
+    float: left;            
+    line-height: 44px;          
+    text-align: center;     
+}   
+.e-computed{
+    width: r(237);
+    height: r(185);
+    margin: r(210) auto r(60) ;
+    img{
+        width: 100%;
+        height: 100%;
+    }
+}
+.e-platform{
+    width: r(251);
+    height: r(315);
+    margin: r(192) auto r(60) ;
+    img{
+        width: 100%;
+        height: 100%;
+    }
+}
+.e-unlock{
+    width: r(125);
+    height: r(166);
+    margin: r(240) auto r(60) ;
+    img{
+        width: 100%;
+        height: 100%;
+    }
+}
+.e-codeSure{
+    width: r(298);
+    height: r(68);
+    line-height: r(68);
+    background: #fff;
+    border: 1px solid #00d589;
+    color: #00d589;
+    font-size: r(32);
+    border-radius: r(10);
+    margin: r(230) auto r(160);
+    
+}
+.e-codeCancel{
+    width: r(298);
+    height: r(68);
+    line-height: r(68);
+    font-size: r(32);
+    color: #999;
+}
+
 /*****************modify rili*****************/
 //.em-calendar-content .em-calendar-item{
 //  width: r(72);
@@ -646,4 +715,12 @@ a{
 }
 .em-calendar-content .em-calendar-active .day, .em-calendar-content .em-calendar-active .lunar{
     color: #fff;
+}
+.em-calendar-content .em-calendar-item{
+    height: 11.285vw;
+    margin: 0 1vw;
+    width: 12.285vw;
+}
+.em-week{
+    padding-bottom: 0;
 }

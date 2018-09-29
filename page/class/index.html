@@ -48,7 +48,7 @@
 						<li class="ptb35" v-if="list.length <= 0">
 							<button class="e-addClass" @tap="addClass">添加课程</button>
 						</li>
-						<li class="bb ptb25" v-for="item in list" to="class/editClass" title="none" v-bind:param="item | formatParam">
+						<li class="bb ptb25" v-for="item in list" @tap="editClass(item)" >
 							<div class="fz28 c19 ub ub-ac">
 								<p class="fz28 c19 e-min-width">{{timestampToTime(item.start_time)}}</p>
 								<p class="fz28 c19">{{item.course_name}}</p>
@@ -95,7 +95,6 @@
 						},function(data,status){
 							this.list = data.data.list;
 							this.date = data.data.datetime;
-							console.log(JSON.stringify(this.list))
 						}.bind(this),'get')
 					},
 					getNowDate:function(){
@@ -180,11 +179,20 @@
 						var date = new Date(this.today);
 						var time1 = date.getTime();
 						var page={
-						'url':'class/addClass',
-						'title':'none',
-						'param':'{dataId:'+parseInt(time1)+'}' 
-					}
-					App.open(page)
+							'url':'class/addClass',
+							'title':'none',
+							'param':'{dataId:'+parseInt(time1)+'}' 
+						}
+						App.open(page)
+					},
+					editClass:function(item){
+						console.log('编辑课程')
+						var page={
+							'url':'class/editClass',
+							'title':'none',
+							'param':'{dataId:'+JSON.stringify(item)+'}' 
+						}
+						App.open(page)
 					}
 				},
 				filters:{

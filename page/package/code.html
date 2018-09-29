@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	    <title></title>
+	  	<script type="text/javascript" src="../../js/mui.min.js" ></script>
+	    <link rel="stylesheet" href="../../css/mui.css" />
+	    <link rel="stylesheet" href="../../css/main.css" />
+	    <link rel="stylesheet" href="../../css/iconfont.css" />
+	    <script type="text/javascript" src="../../js/html-size-calculation.js" ></script>
+	</head>
+	<style type="text/css">	
+			
+	</style>
+
+	<body>
+		<div id="app">
+			<header class="header">
+				<div class="e-icon e-back hd-left mui-action-back"></div>
+				<h2>二维码扫描</h2>
+				<div class="e-icon e-deng hd-right" id="turnTheLight"></div>
+			</header>			
+			<div id="bcid">   	    
+				<!--盛放扫描控件的div-->  			
+			</div>			
+			<div class="mui-bar mui-bar-footer" style="padding: 0px;" class="c-green">		
+				<div class="fbt" @tap="scanPicture">从相册选择二维码</div>		
+				<div class="fbt mui-action-back">取　 消</div>
+			</div>	
+		</div>		
+		<script type="text/javascript">
+			new Vue({
+				el:'#app',
+				data:function(){
+					return{
+						scan:null,
+						result:null
+					}
+				},
+				methods:{
+					startRecognize:function(){	
+						var that = this
+						try{			  
+							var filter;			 //自定义的扫描控件样式			 
+							var styles = {frameColor: "#29E52C",scanbarColor: "#29E52C",background: ""}	
+							//扫描控件构造			
+							that.scan = new plus.barcode.Barcode('bcid',filter,styles);			
+							that.scan.onmarked = this.onmarked; 			
+							that.scan.onerror = this.onerror;			
+							that.scan.start();			//打开关闭闪光灯处理			
+							var flag = false;			
+							document.getElementById("turnTheLight").addEventListener('tap',function(){
+								if(flag == false){			     
+									that.scan.setFlash(true);			      
+									flag = true;			   
+								}else{			     
+									that.scan.setFlash(false);			     
+									flag = false;			  
+								}			
+							});		  
+						}catch(e){			
+							mui.toast("出现错误啦:\n"+e);		     
+						}		  
+					},
+					onerror:function(e){					
+						mui.toast(e);			
+					},			
+					onmarked:function( type, result ) {					
+						var text = '';					
+						switch(type){				
+							case plus.barcode.QR:						
+							text = 'QR: ';						
+							break;					
+							case plus.barcode.EAN13:				
+							text = 'EAN13: ';				
+							break;					
+							case plus.barcode.EAN8:			
+							text = 'EAN8: ';				
+							break;			
+						}
+//							alert( text + " : "+ result );
+						
+						this.result = result;
+						mui.toast(this.result)
+						App.http('apply/Prepare/scan',{
+							"auth-token" : App.getItem("token"),
+	                        "param" : this.result,
+	                        "uid" : App.getItem("userid"),
+						},function(data,status){
+							console.log(JSON.stringify(data));
+							console.log(this.result)
+							if(data.status == 1){
+								var page = {
+									"url":'package/codeUnlock',
+									"title":'none',
+									"param":'{resulet:'+JSON.stringify(this.result)+'}'
+								}
+								App.open(page)
+							}else if(data.status == 2){
+								var page = {
+									"url":'package/codePlat',
+									"title":'none',
+									"param":'{resulet:'+JSON.stringify(this.result)+'}'
+								}
+								App.open(page)
+							}else if(data.status == 3){
+								var page = {
+									"url":'package/codeLogin',
+									"title":'none',
+									"param":'{resulet:'+JSON.stringify(this.result)+'}'
+								}
+								App.open(page)
+							}else{
+								mui.toast(data.msg);
+								mui.back();
+							}
+						}.bind(this))
+					},
+					// 从相册中选择二维码图片
+					scanPicture:function () {		 
+						plus.gallery.pick(function(path){	
+							plus.barcode.scan(path,onmarked,function(error){	
+								plus.nativeUI.alert( "无法识别此图片" );			
+							});		   
+						},function(err){
+							mui.toast("Failed: "+err.message);	
+						});		
+					}	
+				},
+				mounted:function(){
+					mui.plusReady(function () {	          
+						mui.init();		  
+						this.startRecognize();
+					}.bind(this));	
+				}
+			})
+			</script>	
+	</body>
+
+</html>

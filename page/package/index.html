@@ -27,13 +27,13 @@
 		<div id="app">
 			<header class="header">
 				<h2>课件包</h2>
-				<div class="e-icon e-code hd-right"></div>
+				<div class="e-icon e-code hd-right" @tap="codeBtn"></div>
 			</header>
 			<div class="fix-bd">
 				<div class="plr30 bb bgff">
 					<div class="e-search">
 						<input type="text" name="" id="" value="" v-model="search_info" v-on:input="searchBtn"/>
-						<i class="e-icon e-search-btn"></i>
+						<i class="e-icon e-search-btn" ></i>
 					</div>
 				</div>
 				<div class="plr30 bgff e-publicHd bb">
@@ -111,6 +111,9 @@
 			
 			    },
 				methods:{
+					/**
+					 * 点击
+					 * */
 					skip:function(item){
 			            if( this.checkSlide() ){
 			              this.restSlide();
@@ -123,12 +126,16 @@
 			              	App.open(page)
 			            }
 			        },
-			           //滑动开始
+			        /*
+			         * 滑动开始
+			         */
 		            touchStart:function(e){
 		             	// 记录初始位置
 		            	this.startX = e.touches[0].clientX;
 		            },
-			           //滑动结束
+		            /**
+		            * 滑动结束
+		            * */
 		            touchEnd:function(e){
 		                // 当前滑动的父级元素
 			            let parentElement = e.currentTarget.parentElement;
@@ -147,7 +154,9 @@
 			            this.startX = 0;
 			            this.endX = 0;
 		            },
-			              //判断当前是否有滑块处于滑动状态
+			        /**
+			         * 判断当前是否有滑块处于滑动状态
+			         * */
 			        checkSlide:function(){
 			            let listItems = document.querySelectorAll('.list-item');
 			            for( let i = 0 ; i < listItems.length ; i++){
@@ -157,7 +166,9 @@
 				        }
 			            return false;
 			        },
-			        //复位滑动状态
+			        /**
+			         * 复位滑动状态
+			         * */
 			        restSlide:function(){
 			            let listItems = document.querySelectorAll('.list-item');
 			                       // 复位
@@ -170,7 +181,9 @@
 			        deleteItem:function(index){
 			            this.isdelet = index;
 			        },
-			        //获取数据
+			        /*
+			         *获取数据
+			         */
 			        getList:function(){
 			        	App.http('teaching/index/coursewareBox',{
 			        		"auth-token" : App.getItem("token"),
@@ -181,7 +194,9 @@
 			        		mui('#refreshContainer').pullRefresh().endPulldown();
 			        	}.bind(this),'get') 
 			        },
-			        //确定删除
+			        /*
+			         * 确定删除
+			         */
 			        sureDelete:function(index,item){
 			        	this.deletId = item.id
 			            //  复位
@@ -202,10 +217,24 @@
 			            	
 			            }.bind(this))
 			        },
-					// 搜索
+					/**
+					 * 搜索
+					 * */ 
 					searchBtn:function(){
 						this.getList();
-					}
+					},
+					/*
+					 * 二维码扫描
+					 */
+					codeBtn:function(){
+						console.log('二维码扫描');
+						var page = {
+							'url':'package/code',
+							'title':'none',
+							'ani':'none'
+						}
+						App.open(page);
+					},
 				},
 				mounted:function(){
 					mui.plusReady(function(){

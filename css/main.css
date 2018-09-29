@@ -1320,6 +1320,68 @@ a {
   font-size: 0.7466666667rem;
   color: #00d589; }
 
+.e-deng {
+  width: 2.6666666667rem;
+  height: 2.3466666667rem;
+  background-image: url(../images/deng.png);
+  background-size: 0.8533333333rem 0.8533333333rem;
+  background-position: center; }
+
+#bcid {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background: #000000; }
+
+.fbt {
+  width: 50%;
+  background-color: #ffffff;
+  float: left;
+  line-height: 44px;
+  text-align: center; }
+
+.e-computed {
+  width: 6.32rem;
+  height: 4.9333333333rem;
+  margin: 5.6rem auto 1.6rem; }
+  .e-computed img {
+    width: 100%;
+    height: 100%; }
+
+.e-platform {
+  width: 6.6933333333rem;
+  height: 8.4rem;
+  margin: 5.12rem auto 1.6rem; }
+  .e-platform img {
+    width: 100%;
+    height: 100%; }
+
+.e-unlock {
+  width: 3.3333333333rem;
+  height: 4.4266666667rem;
+  margin: 6.4rem auto 1.6rem; }
+  .e-unlock img {
+    width: 100%;
+    height: 100%; }
+
+.e-codeSure {
+  width: 7.9466666667rem;
+  height: 1.8133333333rem;
+  line-height: 1.8133333333rem;
+  background: #fff;
+  border: 1px solid #00d589;
+  color: #00d589;
+  font-size: 0.8533333333rem;
+  border-radius: 0.2666666667rem;
+  margin: 6.1333333333rem auto 4.2666666667rem; }
+
+.e-codeCancel {
+  width: 7.9466666667rem;
+  height: 1.8133333333rem;
+  line-height: 1.8133333333rem;
+  font-size: 0.8533333333rem;
+  color: #999; }
+
 /*****************modify rili*****************/
 .em-calendar-content .em-calendar-item .day {
   font-size: 0.8533333333rem;
@@ -1334,5 +1396,13 @@ a {
 
 .em-calendar-content .em-calendar-active .day, .em-calendar-content .em-calendar-active .lunar {
   color: #fff; }
+
+.em-calendar-content .em-calendar-item {
+  height: 11.285vw;
+  margin: 0 1vw;
+  width: 12.285vw; }
+
+.em-week {
+  padding-bottom: 0; }
 
 /*# sourceMappingURL=main.css.map */

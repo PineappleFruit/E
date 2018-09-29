@@ -30,7 +30,7 @@
 			<header class="header bb">
 				<div class="class-hd class-hd-left" @tap="mui.back()">取消</div>
 				<h2 class="">编辑课程表</h2>
-				<div class="class-hd class-hd-right">完成</div>
+				<div class="class-hd class-hd-right" @tap="classCreate">完成</div>
 			</header>
 			<div class="fix-bd">
 				<div class="ub ub-ac e-classItem bgff" @tap="chooseCourse">
@@ -96,6 +96,36 @@
             			end : '',
             			courseList:[],
             			classList:[],
+            			_oldBack:null,
+            			isBack:false
+					}
+				},
+				computed:{
+					isEdit(){
+						const {cousreItem,classItem,start,end} = this
+						return{
+							cousreItem,
+							classItem,
+							start,
+							end
+						}
+					}
+				},
+				watch:{
+					isEdit:{
+						handler:function(val){
+							if(val.cousreItem || val.classItem || val.start || val.end){
+								this.isBack = true
+							}
+							if(this.isBack){ 
+								var backButtonPress = 0;
+								var that = this;
+								mui.back = function(event) {
+									that.isAttes = true
+								};
+							} 
+						},
+						deep:true
 					}
 				},
 				methods:{
@@ -175,9 +205,15 @@
 		                    this.end = selectItems.y.value + '-' + selectItems.m.value + '-' + selectItems.d.value +'   '+ selectItems.h.value + ':' + selectItems.i.value ;	
 		              	}.bind(this))
 		            },
+		            /***
+		             * 弹出确认删除弹框
+		             * */
 		            deleteClass:function(){
 		            	this.isDelet = true
 		            },
+		            /**
+		             * 确认删除
+		             * */
 		            sureDelet:function(){
 		            	App.http('basic/Schedule/del',{
 		            		"auth-token" : App.getItem("token"),
@@ -198,13 +234,52 @@
 		                    mui.back();
 		                    
 		            	}.bind(this))
+		            },
+		            /**
+		             * 修改完成  
+		             */
+		            classCreate:function(){
+		            	App.http('basic/Schedule/edit',{
+		            		"auth-token" : App.getItem("token"),
+	                        "start_time":this.start,
+	                        "end_time" : this.end,
+	                        "class_id" : this.classId,
+	                        "cur_id" : this.courseId,
+	                        "id" : this.defaultDate.id
+		            	},function(data,status){
+		            		if(data.status != 1){
+								mui.toast(data.msg);
+								return;
+							}
+							this.start = '';
+		                    this.end = '';
+		                    this.cousreItem = '';
+		                    this.classId = '';
+		                    this.courseId = '';
+		                    this.classItem = '';
+		                    App.send('page/class/index.html','update');
+		                    mui.toast('修改成功')
+		                    mui.back();
+		            	}.bind(this))
+		            },
+		            /*
+		             *确认返回
+		             * */
+		            sureCancle:function(){
+		            	e.preventDefault();
+		            	this._oldBack();
+						this.isExit = false;
+						this.isBack = false;
 		            }
+		            
 				},
 				mounted:function(){
 					mui.plusReady(function() {
 			        	var self = plus.webview.currentWebview();
-			        	this.defaultDate = self.defaultDate;
-			        	
+			        	this.defaultDate = self.dataId;
+			        	this.getlist();
+			        	console.log(this.defaultDate);
+			        	this._oldBack = mui.back; 
 			        }.bind(this))
 				}
 			})

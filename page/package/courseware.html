@@ -6,11 +6,15 @@
 	    <title></title>
 	  	<script type="text/javascript" src="../../js/mui.min.js" ></script>
 	    <link rel="stylesheet" href="../../css/mui.css" />
+	    <link rel="stylesheet" href="../../css/mui.previewimage.css" />
 	    <link rel="stylesheet" href="../../css/main.css" />
 	    <link rel="stylesheet" href="../../css/iconfont.css" />
 	    <script type="text/javascript" src="../../js/html-size-calculation.js" ></script>
 	</head>
 	<style>
+		.fix-search{
+			z-index: 19;
+		}
 	</style>
 	<body>
 		<div id="app">
@@ -26,10 +30,11 @@
 					</div>
 				</div>
 				<div class="fix-search-box">
-					<div class=".mui-table-view-cell" v-for="(value,index) in ware_list">
+					<div class=".mui-table-view-cell" v-for="(value,index) in ware_list" @tap="preview(value)">
 						<div class="bt ub ub-ac plr30 ptb15">
 							<div class="e-coursePic">
-								<img :src="fileCover(value)"/>
+								<img :src="fileCover(value)" v-if="isImg(value)" data-preview-src="" data-preview-group="1"/>
+								<img :src="fileCover(value)" v-else/>
 							</div>
 							<p class="ub-f1 fz28 c32 word-break plr30">{{value.filename}}</p>
 						</div>
@@ -45,6 +50,11 @@
 						list:[],
 						classId:'',
 						searchInfo : "",
+						audioType:["wav","mp3","ram","wma","avi"],
+			            txtType: ["xlsx","txt","docx","ppt","xls","doc","pptx","pdf"],
+			            imgType:["jpg","png","gif"],
+			            videoType:["mp4",],
+			            player : null,
 					}
 				},
 				computed:{
@@ -67,7 +77,6 @@
 							"auth-token" : App.getItem("token"),
                       		"id" : this.classId,
 						},function(data,status){
-							console.log(JSON.stringify(data.data.list ));
 							this.list = data.data.list
 						}.bind(this),'get')
 					},
@@ -92,18 +101,115 @@
 			        	} else if(value.ext == 'wav' || value.ext == 'mp3' || value.ext == 'ram' || value.ext == 'wma' || value.ext == 'mp4') {
 			        		var url = "../../images/e-music.png"
 			        	} else {
-			        		var url = "../../images/e-psd.png"
+			        		var url = "../../images/e-psd.png";
+			        		
 			        	}
 			        	return url
 			        },
+			        /*
+			         *判断是否是图片 
+			         */
+			        isImg:function(value){
+			        	var fileUrl = value.host +''+ value.url;
+			        	if(this.imgType.indexOf(value.ext) != -1){
+			        		return true
+			        	}
 			        },
-			        mounted: function() {
-				        mui.plusReady(function() {
-				        	var self = plus.webview.currentWebview();
-				        	this.classId = self.class_id
-				        	this.getlist()
-				        }.bind(this))
-			        }
-			        })</script>
+			        /*
+			         *预览
+			         * */
+			        preview:function(value){
+			        	var fileUrl = value.host +''+ value.url;
+//			        	if(this.audioType.indexOf(value.ext) != -1){
+//			        		this.audioPlay(fileUrl)
+//			        	}else if(this.videoType.indexOf(value.ext) != -1){
+//			        		this.videoPlay(fileUrl)
+//			        	}else if(this.txtType.indexOf(value.ext) != -1){
+//			        		this.filePlay(fileUrl)
+//			        	}else if(this.imgType.indexOf(value.ext) != -1){
+////			        		this.imgPlay(fileUrl)
+//			        	}else{
+//			        		mui.toast('暂不支持预览');
+//			        	}
+						if(this.imgType.indexOf(value.ext) != -1){
+							return ;
+						}else{
+							var nwaiting = plus.nativeUI.showWaiting();
+							var dtask = plus.downloader.createDownload(fileUrl, {}, 
+					       		function(d, status) {
+					       			plus.nativeUI.closeWaiting();
+					       			if(status == 200) {	
+					       				var fileUrl = d.filename;	 
+					       				plus.runtime.openFile(fileUrl, {}, 
+					       					function(e) {			
+					       						mui.toast('打开失败');			
+					       					});			
+					       			} else {			
+					       				mui.toast("Download failed: " + status);	
+					       			} 
+					       	});			
+					       	dtask.start();
+						}
+			        },
+			        /**
+			         * 音频播放
+			         * **/
+			        audioPlay:function(fileUrl){
+			        	if ( plus.audio == undefined ) {
+							mui.toast( "Device not ready!" );
+						}
+						p = plus.audio.createPlayer( fileUrl );
+						p.play( function () {
+							mui.toast( "Audio play success!" ); 
+						}, function ( e ) {
+							mui.toast( "Audio play error: " + e.message ); 
+						} ); 
+			       },
+			       /**
+			        * 视频播放
+			        **/
+			       videoPlay:function(fileUrl){
+			       		this.player = plus.video.createVideoPlayer('videoplayer', {
+							src:fileUrl,
+							top:'100px',
+							left:'0px',
+							width: '100%',
+							height: '200px',
+							position: 'static'
+						});
+						plus.webview.currentWebview().append(this.player);
+			        },
+				    /*
+			        *文件预览
+			        * */
+				    filePlay:function(fileUrl){ 
+				    	console.log('文件预览');
+				       	var dtask = plus.downloader.createDownload(fileUrl, {}, 
+				       		function(d, status) {	
+				       			if(status == 200) {	
+				       				var fileUrl = d.filename;	
+				       				plus.runtime.openFile(fileUrl, {}, 
+				       					function(e) {			
+				       						mui.toast('打开失败');			
+				       					});			
+				       			} else {			
+				       				mui.toast("Download failed: " + status);	
+				       			} 
+				       	});			
+				       	dtask.start();
+				    },
+		        },
+		        mounted: function() {
+			        mui.plusReady(function() {
+			        	var self = plus.webview.currentWebview();
+			        	this.classId = self.class_id
+			        	this.getlist();
+			        	mui.previewImage();
+			        }.bind(this))
+		        }
+		    })
+		</script>
 	</body>
+	<script type="text/javascript" src="../../js/mui.zoom.js" ></script>
+	<script type="text/javascript" src="../../js/mui.previewimage.js" ></script>
 </html>

@@ -31,13 +31,26 @@
 	},
 	"page/package/index.html": {
 		"refer": [
-			"page/package/courseware.html"
+			"page/package/courseware.html",
+			"page/package/test.html",
+			"page/package/code.html"
 		]
 	},
 	"page/class/index.html": {
 		"refer": [
 			"page/class/addClass.html",
 			"page/class/editClass.html"
+		]
+	},
+	"page/package/code.html": {
+		"refer": [
+			"page/package/codeLogin.html",
+			"page/package/codePlat.html"
+		]
+	},
+	"page/package/codeLogin.html": {
+		"refer": [
+			"page/package/index.html"
 		]
 	}
 }

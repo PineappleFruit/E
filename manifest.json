@@ -37,7 +37,19 @@
         },
         "Speech": {
             "description": "管理语音识别插件"
-        }
+        },
+        "VideoPlayer": {
+			"description": "视频播放"
+		},
+		"LivePusher": {
+			"description": "直播推流"
+		},
+		"Audio": {
+			"description": "音频"
+		},
+		"Barcode": {
+			"description": "二维码"
+		}
 	},
 	"plus": {
 		"statusbar": {
@@ -170,7 +182,9 @@
 			"page/package/index.html": {
 				"resources": [],
 				"refer": [
-					"page/package/courseware.html"
+					"page/package/courseware.html",
+					"page/package/test.html",
+					"page/package/code.html"
 				],
 				"priority": 0
 			},
@@ -179,6 +193,21 @@
 				"refer": [
 					"page/class/addClass.html",
 					"page/class/editClass.html"
+				],
+				"priority": 0
+			},
+			"page/package/code.html": {
+				"resources": [],
+				"refer": [
+					"page/package/codeLogin.html",
+					"page/package/codePlat.html"
+				],
+				"priority": 0
+			},
+			"page/package/codeLogin.html": {
+				"resources": [],
+				"refer": [
+					"page/package/index.html"
 				],
 				"priority": 0
 			}

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	    <title></title>
+	  	<script type="text/javascript" src="../../js/mui.min.js" ></script>
+	    <link rel="stylesheet" href="../../css/mui.css" />
+	    <link rel="stylesheet" href="../../css/main.css" />
+	    <link rel="stylesheet" href="../../css/iconfont.css" />
+	    <script type="text/javascript" src="../../js/html-size-calculation.js" ></script>
+	</head>
+	<body>
+		<div id="app">
+			<header class="header">
+				<div class="e-icon e-back hd-left mui-action-back"></div>
+				<h2>扫描结果</h2>
+			</header>
+			<div class="fix-bd">
+				<div class="e-platform">
+					<img src="../../images/code_platform.png" alt="" />
+				</div>
+				<p class="fz32 c32 tx-c">开启E.WORK讲台</p>
+				<div class="e-codeBtn-box tx-c">
+					<button class="e-codeSure" @tap="open">开启</button>
+				</div>
+				<div class="e-codeBtn-cancel tx-c">
+					<button class="e-codeCancel" @tap="cancle">取消开启</button>
+				</div>
+			</div>
+		</div>
+		<script>
+			new Vue({
+				el:'#app',
+				data:function(){
+					return{
+						info:''	
+					}
+				},
+				methods:{
+					open:function(){
+						App.http('apply/Prepare/powerOn',{
+							"auth-token" : App.getItem("token"),
+		                    "param" : this.info,
+		                    "uid" : App.getItem('userid'),
+						},function(data,status){
+							if(data.status != 1){
+								mui.toast(data.msg);
+								return
+							}
+							mui.toast('开启成功');
+							var h=plus.webview.getLaunchWebview();
+							App.send(h.id,'update')
+							var index=plus.webview.getLaunchWebview();//获得初始窗口
+							plus.webview.show(index);//打开初始窗口
+						}.bind(this))
+					},
+					cancle:function(){
+						var h=plus.webview.getLaunchWebview();
+						App.send(h.id,'update')
+						var index=plus.webview.getLaunchWebview();//获得初始窗口
+						plus.webview.show(index);//打开初始窗口
+					}
+				},
+				mounted:function(){
+					mui.plusReady(function(){
+						var self = plus.webview.currentWebview();
+						this.info = self.resulet;
+						console.log(this.info)
+					}.bind(this))
+				}
+			})
+		</script>
+	</body>
+</html>

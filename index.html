@@ -175,6 +175,7 @@
 	 * 退出登录事件
 	 * */
 	App.request('update',function(){
+		console.log('退出登录')
 		var defaultTab = document.getElementById("defaultTab");
 	    //模拟首页点击
 	    mui.trigger(defaultTab, 'tap');

@@ -241,10 +241,10 @@
 		            classCreate:function(){
 		            	App.http('basic/Schedule/edit',{
 		            		"auth-token" : App.getItem("token"),
-	                        "start_time":this.start,
-	                        "end_time" : this.end,
-	                        "class_id" : this.classId,
-	                        "cur_id" : this.courseId,
+	                        "start_time":this.start ? this.start : this.timestampToTime(this.defaultDate.start_time),
+	                        "end_time" : this.end ? this.end : this.timestampToTime(this.defaultDate.end_time) ,
+	                        "class_id" : this.classId ? this.classId : this.defaultDate.class_id,
+	                        "cur_id" : this.courseId ? this.courseId : this.defaultDate.cur_id,
 	                        "id" : this.defaultDate.id
 		            	},function(data,status){
 		            		if(data.status != 1){
@@ -259,13 +259,13 @@
 		                    this.classItem = '';
 		                    App.send('page/class/index.html','update');
 		                    mui.toast('修改成功')
-		                    mui.back();
+		                    this._oldBack();
 		            	}.bind(this))
 		            },
 		            /*
 		             *确认返回
 		             * */
-		            sureCancle:function(){
+		            sureCancle:function(e){
 		            	e.preventDefault();
 		            	this._oldBack();
 						this.isExit = false;
@@ -278,7 +278,7 @@
 			        	var self = plus.webview.currentWebview();
 			        	this.defaultDate = self.dataId;
 			        	this.getlist();
-			        	console.log(this.defaultDate);
+			        	console.log(JSON.stringify(this.defaultDate));
 			        	this._oldBack = mui.back; 
 			        }.bind(this))
 				}

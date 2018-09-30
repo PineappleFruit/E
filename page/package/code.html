@@ -39,7 +39,8 @@
 					}
 				},
 				methods:{
-					startRecognize:function(){	
+					startRecognize:function(){
+						console.log('开始扫描')
 						var that = this
 						try{			  
 							var filter;			 //自定义的扫描控件样式			 
@@ -80,7 +81,7 @@
 							break;			
 						}
 //							alert( text + " : "+ result );
-						
+						this.scan.cancel();
 						this.result = result;
 						mui.toast(this.result)
 						App.http('apply/Prepare/scan',{

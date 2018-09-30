@@ -97,7 +97,6 @@
 						var page = {
 							"url": "my/login",
 							"title": "none",
-							"ani": "none"
 						};
 						mui.plusReady(function() { 
 							App.open(page); 
@@ -109,7 +108,6 @@
 					//状态更改监听
 					App.request('update', function() {
 						this.getuser();
-						console.log('dhd')
 					}.bind(this));
 				}
 			})

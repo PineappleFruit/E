@@ -33,7 +33,7 @@
           	<div class="btn_box mb30">
               	<button class="btn btn-green" type="button" :disabled="isEidt" @tap="login">登录</button>
           	</div>
-          	<span class="forgetPwd fz28 c66">忘记密码？</span>
+          	<span class="forgetPwd fz28 c66" to="my/forget" title="none">忘记密码？</span>
           	<!--toast-->
           	
 		</div>
@@ -42,7 +42,7 @@
 				el:'#app',
 				data:function(){
 					return{
-						userip: '',
+						userip: null,
 			            username: '',
 			            userpwd:  '',
 			            isEidt : true,
@@ -79,13 +79,13 @@
 		                  	mui.toast('密码不能为空');
 		                  	return;
 		                }
-//		        		App.send('page/package/index.html', 'update');
-//						App.send('page/my/index.html', 'update');
-//						App.send('page/class/index.html', 'update');
-						
-//						var h=plus.webview.getLaunchWebview();
-//						console.log(h.id);
-//						App.send(h.id,'update')
+		        		if(this.userip){
+		        			App.config.server = this.userip;
+		        			App.setItem('userIp',this.userip)
+		        		}else{
+		        			App.config.server = "http://jt.biantikeji.com"
+		        		}
+		        		console.log(App.config.server)
 		        		App.http('techer/login/login',{
 		        			techer_number : this.username,
                           	pwd : this.userpwd,
@@ -110,6 +110,16 @@
 							plus.webview.show(index);//打开初始窗口 
 		        		}.bind(this))
 	               }
+		        },
+		        mounted:function(){
+//		        	获取之前输入ip
+					mui.plusReady(function(){
+						this.userip  = App.getItem('userIp') || null;
+					}.bind(this))
+		        	if(mui.os.ios){ //判断是ios还是安卓设备
+				        ws=plus.webview.currentWebview();    
+				        ws.setStyle({'popGesture':'none'});//ios关闭右划
+				    }
 		        }
 			})
 		</script>
